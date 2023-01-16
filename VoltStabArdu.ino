@@ -11,16 +11,6 @@ void setup() {
   Serial.begin(9600);
   disp.clear();
   disp.brightness(5);  // яркость, 0 - 7 (минимум - максимум)
-
-  // disp.displayByte(0x04, 0xfe);
-  // disp.displayByte(0x03, 0xfe);
-  // disp.displayByte(0x02, 0xfe);
-  // disp.displayByte(0x01, 0xfe);
-  // disp.displayByte(0x00, 0xfe);
-  //disp.displayInputVoltage(199);
-  //byte arr[] = { _H, _E };
-  //disp.display(arr);
-
   countDown();
 }
 
@@ -48,6 +38,3 @@ void countDown() {
     disp.yellowLedOn();    
   }
 }
-
-// 0xFE 1111 1110 - отображается 8 без светодиода
-// 0xFF 1111 1111 - отображается 8 и включается светодиод
