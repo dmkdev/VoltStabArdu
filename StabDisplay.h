@@ -30,11 +30,17 @@ public:
   void yellowLedOn();
   
   void redLedOn();
+
+  void greenLedOff();
+
+  void yellowLedOff();
+  
+  void redLedOff();
   
 private:
-  uint8_t lastData[4];
+  uint8_t lastData[6];
   void update();
-  int writeByte(byte wr_data);
+  int writeByte(uint8_t wr_data);
   void start(void);
   void stop(void);
 
@@ -71,109 +77,109 @@ void swapBytes(byte* newByte, byte oldByte, byte oldP, byte newP);
 
 /************** БУКВЫ И СИМВОЛЫ *****************/
 
-#ifndef AVR
-#define _A 0x77
-#define _B 0x7f
-#define _C 0x39
-#define _D 0x3f
-#define _E 0x79
-#define _F 0x71
-#define _G 0x3d
-#define _H 0x76
-#define _J 0x1e
-#define _L 0x38
-#define _N 0x37
-#define _O 0x3f
-#define _P 0x73
-#define _S 0x6d
-#define _U 0x3e
-#define _Y 0x6e
-#define _a 0x5f
-#define _b 0x7c
-#define _c 0x58
-#define _d 0x5e
-#define _e 0x7b
-#define _f 0x71
-#define _h 0x74
-#define _i 0x10
-#define _j 0x0e
-#define _l 0x06
-#define _n 0x54
-#define _o 0x5c
-#define _q 0x67
-#define _r 0x50
-#define _t 0x78
-#define _u 0x1c
-#define _y 0x6e
-#define _dash 0x40
-#define _under 0x08
-#define _equal 0x48
-#define _empty 0x00
-#define _degree 0x63
+// #ifndef AVR
+// #define _A 0x77
+// #define _B 0x7f
+// #define _C 0x39
+// #define _D 0x3f
+// #define _E 0x79
+// #define _F 0x71
+// #define _G 0x3d
+// #define _H 0x76
+// #define _J 0x1e
+// #define _L 0x38
+// #define _N 0x37
+// #define _O 0x3f
+// #define _P 0x73
+// #define _S 0x6d
+// #define _U 0x3e
+// #define _Y 0x6e
+// #define _a 0x5f
+// #define _b 0x7c
+// #define _c 0x58
+// #define _d 0x5e
+// #define _e 0x7b
+// #define _f 0x71
+// #define _h 0x74
+// #define _i 0x10
+// #define _j 0x0e
+// #define _l 0x06
+// #define _n 0x54
+// #define _o 0x5c
+// #define _q 0x67
+// #define _r 0x50
+// #define _t 0x78
+// #define _u 0x1c
+// #define _y 0x6e
+// #define _dash 0x40
+// #define _under 0x08
+// #define _equal 0x48
+// #define _empty 0x00
+// #define _degree 0x63
 
-#define _0 0x3f
-#define _1 0x06
-#define _2 0x5b
-#define _3 0x4f
-#define _4 0x66
-#define _5 0x6d
-#define _6 0x7d
-#define _7 0x07
-#define _8 0x7f
-#define _9 0x6f
+// #define _0 0x3f
+// #define _1 0x06
+// #define _2 0x5b
+// #define _3 0x4f
+// #define _4 0x66
+// #define _5 0x6d
+// #define _6 0x7d
+// #define _7 0x07
+// #define _8 0x7f
+// #define _9 0x6f
 
-#else
+// #else
 
-enum TM1637_letters {
-  _A = 0x77,
-  _B = 0x7f,
-  _C = 0x39,
-  _D = 0x3f,
-  _E = 0x79,
-  _F = 0x71,
-  _G = 0x3d,
-  _H = 0x76,
-  _J = 0x1e,
-  _L = 0x38,
-  _N = 0x37,
-  _O = 0x3f,
-  _P = 0x73,
-  _S = 0x6d,
-  _U = 0x3e,
-  _Y = 0x6e,
-  _a = 0x5f,
-  _b = 0x7c,
-  _c = 0x58,
-  _d = 0x5e,
-  _e = 0x7b,
-  _f = 0x71,
-  _h = 0x74,
-  _i = 0x10,
-  _j = 0x0e,
-  _l = 0x06,
-  _n = 0x54,
-  _o = 0x5c,
-  _q = 0x67,
-  _r = 0x50,
-  _t = 0x78,
-  _u = 0x1c,
-  _y = 0x6e,
-  _dash = 0x40,
-  _under = 0x08,
-  _equal = 0x48,
-  _empty = 0x00,
-  _degree = 0x63,
+// enum TM1637_letters {
+//   _A = 0x77,
+//   _B = 0x7f,
+//   _C = 0x39,
+//   _D = 0x3f,
+//   _E = 0x79,
+//   _F = 0x71,
+//   _G = 0x3d,
+//   _H = 0x76,
+//   _J = 0x1e,
+//   _L = 0x38,
+//   _N = 0x37,
+//   _O = 0x3f,
+//   _P = 0x73,
+//   _S = 0x6d,
+//   _U = 0x3e,
+//   _Y = 0x6e,
+//   _a = 0x5f,
+//   _b = 0x7c,
+//   _c = 0x58,
+//   _d = 0x5e,
+//   _e = 0x7b,
+//   _f = 0x71,
+//   _h = 0x74,
+//   _i = 0x10,
+//   _j = 0x0e,
+//   _l = 0x06,
+//   _n = 0x54,
+//   _o = 0x5c,
+//   _q = 0x67,
+//   _r = 0x50,
+//   _t = 0x78,
+//   _u = 0x1c,
+//   _y = 0x6e,
+//   _dash = 0x40,
+//   _under = 0x08,
+//   _equal = 0x48,
+//   _empty = 0x00,
+//   _degree = 0x63,
 
-  _0 = 0x3f,
-  _1 = 0x06,
-  _2 = 0x5b,
-  _3 = 0x4f,
-  _4 = 0x66,
-  _5 = 0x6d,
-  _6 = 0x7d,
-  _7 = 0x07,
-  _8 = 0x7f,
-  _9 = 0x6f,
-};
-#endif
+//   _0 = 0x3f,
+//   _1 = 0x06,
+//   _2 = 0x5b,
+//   _3 = 0x4f,
+//   _4 = 0x66,
+//   _5 = 0x6d,
+//   _6 = 0x7d,
+//   _7 = 0x07,
+//   _8 = 0x7f,
+//   _9 = 0x6f,
+// };
+// #endif
 #endif

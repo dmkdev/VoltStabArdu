@@ -18,7 +18,7 @@ const uint8_t digitHEX[] = {
 const uint8_t inputSegments[] = { 0x05, 0x03, 0x04 };
 const uint8_t outputSegments[] = { 0x02, 0x01, 0x00 };
 
-boolean DisplayOnInput = true;
+boolean DisplayOnInput = true, greenOn = false, yellowOn = false, redOn = false;
 
 StabDisplay::StabDisplay(uint8_t clk, uint8_t dio) {
   Clkpin = clk;
@@ -38,7 +38,7 @@ unsigned char reverse(unsigned char b) {
   return b;
 }
 
-int StabDisplay::writeByte(byte wr_data) {
+int StabDisplay::writeByte(uint8_t wr_data) {
   uint8_t i;
   for (i = 0; i < 8; i++)  //sent 8bit data
   {
@@ -103,14 +103,14 @@ void StabDisplay::display(uint8_t BitAddr, uint8_t DispData) {
   sendByte(BitAddr, SegData);
 }
 
-void StabDisplay::displayByte(uint8_t DispData[]) {
-  uint8_t SegData[3];
-  for (byte i = 0; i < 3; i++) {
-    lastData[i] = DispData[i];
-    SegData[i] = DispData[i];
-  }
-  sendArray(SegData);
-}
+// void StabDisplay::displayByte(uint8_t DispData[]) {
+//   uint8_t SegData[3];
+//   for (byte i = 0; i < 3; i++) {
+//     lastData[i] = DispData[i];
+//     SegData[i] = DispData[i];
+//   }
+//   sendArray(SegData);
+// }
 
 void StabDisplay::displayByte(uint8_t BitAddr, uint8_t DispData) {
   uint8_t SegData;
@@ -126,21 +126,37 @@ void StabDisplay::sendByte(uint8_t BitAddr, int8_t sendData) {
   stop();                     //
   start();                    //
   writeByte(BitAddr | 0xc0);  //
-  writeByte(sendData);        //
-  stop();                     //
-  start();                    //
-  writeByte(Cmd_DispCtrl);    //
-  stop();                     //
+  if (redOn && BitAddr == 0x02) {
+    sendData |= 0x01;
+  } else if (yellowOn && BitAddr == 0x03) {
+    sendData |= 0x01;
+  } else if (greenOn && BitAddr == 0x00) {
+    sendData |= 0x01;
+  }
+  writeByte(sendData);      //
+  stop();                   //
+  start();                  //
+  writeByte(Cmd_DispCtrl);  //
+  stop();                   //
 }
 
 void StabDisplay::sendArray(uint8_t sendData[]) {
+  uint8_t BitAddr;
   start();                //start signal sent to StabDisplay from MCU
   writeByte(ADDR_FIXED);  //
   stop();                 //
   //writeByte(Cmd_SetAddr);  //
   for (byte i = 0; i < 3; i++) {
-    start();  //
-    writeByte((DisplayOnInput ? inputSegments[i] : outputSegments[i]) | 0xc0);
+    start();
+    BitAddr = (DisplayOnInput ? inputSegments[i] : outputSegments[i]);
+    writeByte(BitAddr | 0xc0);
+    if (redOn && BitAddr == 0x02) {
+      sendData[i] |= 0x01;
+    } else if (yellowOn && BitAddr == 0x03) {
+      sendData[i] |= 0x01;
+    } else if (greenOn && BitAddr == 0x00) {
+      sendData[i] |= 0x01;
+    }
     writeByte(sendData[i]);  //
     stop();                  //
   }
@@ -231,13 +247,25 @@ void swapBytes(byte* newByte, byte oldByte, byte newP, byte oldP) {
 }
 
 void StabDisplay::greenLedOn() {
-  displayByte(0x00, 0x1);
+  greenOn = true;
 }
 
 void StabDisplay::yellowLedOn() {
-  displayByte(0x03, 0x1);
+  yellowOn = true;
 }
 
 void StabDisplay::redLedOn() {
-  displayByte(0x02, 0x1);
+  redOn = true;
+}
+
+void StabDisplay::greenLedOff() {
+  greenOn = false;
+}
+
+void StabDisplay::yellowLedOff() {
+  yellowOn = false;
+}
+
+void StabDisplay::redLedOff() {
+  redOn = false;
 }
