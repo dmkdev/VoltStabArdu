@@ -3,7 +3,7 @@
 #define RL1 10
 #define RL2 11
 #define RL3 12
-#define RL4 13
+#define RL4 15
 #include <GyverNTC.h>
 // термистор на пине А6
 // сопротивление резистора 10к
@@ -18,9 +18,20 @@ bool protectMode = false;
 bool delayMode = false;
 bool workingMode = false;
 bool rotate = false;
-uint16_t inputVoltage = 110, outputVoltage = 220, temperature, outputDispVal;
+uint16_t inputVoltage = 0, outputVoltage = 220, temperature, outputDispVal;
+
+double sensorValue1 = 0;
+double sensorValue2 = 0;
+int crosscount = 0;
+int climb_flag = 0;
+int val[100];
+int max_v = 0;
+double VmaxD = 0;
+double VeffD = 0;
+double Veff = 0;
 
 void setup() {
+  all_off(); 
   Serial.begin(9600);
   disp.clear();
   disp.brightness(5);  // яркость, 0 - 7 (минимум - максимум)
@@ -28,23 +39,23 @@ void setup() {
   pinMode(RL2, OUTPUT);
   pinMode(RL3, OUTPUT);
   pinMode(RL4, OUTPUT);
-
-  all_off();
   test();
+  all_off();
   countDown();
 }
 
 void loop() {
   temperature = round(therm.getTempAverage());
+  inputVoltage = (int)measureVoltage();
 
   // При продакшне отключить!
-  if (millis() - testTimer >= 1000) {
-    testTimer = millis();
-    inputVoltage += 10;
-    if (inputVoltage > 290) {
-      inputVoltage = 110;
-    }
-  }
+  //  if (millis() - testTimer >= 1000) {
+  //    testTimer = millis();
+  //    inputVoltage += 10;
+  //    if (inputVoltage > 290) {
+  //      inputVoltage = 110;
+  //    }
+  //  }
 
   if (millis() - oneSecTimer >= 100) {
     oneSecTimer = millis();
@@ -73,7 +84,7 @@ void tempCheck() {
 }
 
 void voltageCheck() {
-  //inputVoltage = analogRead()
+
   if (inputVoltage < 140) {
     protectMode = true;
     workingMode = false;
@@ -252,4 +263,39 @@ void RL4_on() {
 }
 void RL4_off() {
   digitalWrite(RL4, HIGH);
+}
+
+float measureVoltage() {
+  for ( int i = 0; i < 100; i++ ) {
+    sensorValue1 = analogRead(A0);
+    if (analogRead(A0) > 511) {
+      val[i] = sensorValue1;
+    }
+    else {
+      val[i] = 0;
+    }
+    delay(1);
+  }
+
+  max_v = 0;
+
+  for ( int i = 0; i < 100; i++ )
+  {
+    if ( val[i] > max_v )
+    {
+      max_v = val[i];
+    }
+    val[i] = 0;
+  }
+  if (max_v != 0) {
+    VmaxD = max_v;
+    VeffD = VmaxD / sqrt(2);
+    Veff = (((VeffD - 420.76) / -90.24) * -210.2) + 210.2;
+  }
+  else {
+    Veff = 0;
+  }
+
+  VmaxD = 0;
+  return Veff;
 }
